@@ -1,0 +1,6 @@
+{
+  "name": "Cakrawala: Rift Chess",
+  "description": "Game catur taktis dimensi baru dengan medan elemen dinamis, penyerapan jiwa bidak, kabut perang, dan mantra waktu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
