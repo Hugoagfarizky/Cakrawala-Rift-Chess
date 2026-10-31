@@ -594,24 +594,279 @@ export default function App() {
   const inspectedTerrain = boardState.terrain[inspectCoord.r][inspectCoord.c];
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-[#0B0F17] text-[#F1F5F9] select-none">
-      {/* Isolated 60fps Canvas Playfield */}
-      <div className="absolute inset-0 z-0">
-        <RiftBoardCanvas
-          gameState={gameState}
-          gameMode={gameMode}
-          boardState={boardState}
-          selectedCoord={selectedCoord}
-          cursorCoord={cursorCoord}
-          activeSpell={activeSpell}
-          spellFirstTarget={spellFirstTarget}
-          aiTelegraph={aiTelegraph}
-          fxTrigger={fxTrigger}
-          onTileClick={handleTileClick}
-          onHoverTile={setHoveredCoord}
-          onCursorMove={setCursorCoord}
-        />
+    <div className="relative w-screen h-screen overflow-hidden bg-[#0B0F17] text-[#F1F5F9] select-none flex flex-col">
+      {/* =====================================================================
+          TOP PERIMETER BAR (Rendered in Active Play)
+         ===================================================================== */}
+      {gameState !== 'TITLE_MENU' && (
+        <div className="shrink-0 z-10 px-3 pt-2.5 pb-1 md:px-5 md:pt-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0F172A]/95 border border-slate-800 rounded-xl px-4 py-2 shadow-lg">
+            {/* Left: Game Title & Mode Readout */}
+            <div className="flex items-center gap-3">
+              <span className="font-display font-bold text-sm md:text-base text-amber-400 whitespace-nowrap shrink-0">
+                CAKRAWALA
+              </span>
+              <span className="text-slate-600" aria-hidden="true">
+                ·
+              </span>
+              <span className="text-xs text-slate-300 font-mono-num whitespace-nowrap">
+                Putaran {boardState.turnNumber}
+              </span>
+              <span className="text-slate-600 hidden sm:inline" aria-hidden="true">
+                ·
+              </span>
+              <span className="text-xs text-sky-300 hidden sm:inline whitespace-nowrap">
+                {gameMode === 'RIFT_TACTICS'
+                  ? 'Mode Rift Taktis'
+                  : gameMode === 'FOG_OF_WAR'
+                  ? 'Mode Kabut Perang'
+                  : 'Mode Gempa Kuantum'}
+              </span>
+            </div>
+
+            {/* Center: Turn & Aether Meters */}
+            <div className="flex items-center gap-4 font-mono-num text-xs">
+              {/* White Status */}
+              <div
+                className={`flex items-center gap-2 px-2.5 py-1 rounded-md border ${
+                  boardState.turn === 'w'
+                    ? 'bg-amber-500/15 border-amber-400/70 text-amber-200'
+                    : 'bg-slate-900/60 border-slate-800 text-slate-400'
+                }`}
+              >
+                <span className="font-semibold">PUTIH</span>
+                <span>·</span>
+                <span className="text-sky-300">
+                  Aether: {boardState.aether.w}/{boardState.maxAether}
+                </span>
+                {boardState.inCheck.w && (
+                  <span className="text-rose-400 font-bold">· BAHAYA!</span>
+                )}
+              </div>
+
+              {/* Black Status */}
+              <div
+                className={`flex items-center gap-2 px-2.5 py-1 rounded-md border ${
+                  boardState.turn === 'b'
+                    ? 'bg-purple-500/20 border-purple-400/70 text-purple-200'
+                    : 'bg-slate-900/60 border-slate-800 text-slate-400'
+                }`}
+              >
+                <span className="font-semibold">
+                  {opponentType === 'AI' ? 'AI HITAM' : 'HITAM'}
+                </span>
+                <span>·</span>
+                <span className="text-sky-300">
+                  Aether: {boardState.aether.b}/{boardState.maxAether}
+                </span>
+                {boardState.inCheck.b && (
+                  <span className="text-rose-400 font-bold">· BAHAYA!</span>
+                )}
+              </div>
+            </div>
+
+            {/* Right: Utility Buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowRulesModal(true)}
+                className="px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              >
+                Panduan Elemen
+              </button>
+              <button
+                onClick={() => {
+                  const m = sound.toggleMute();
+                  setIsMuted(m);
+                }}
+                className="px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-900 border border-slate-700 hover:border-slate-500 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              >
+                {isMuted ? 'Suara: Mati' : 'Suara: Aktif'}
+              </button>
+              <button
+                onClick={() =>
+                  setGameState((prev) => (prev === 'PLAYING' ? 'PAUSED' : 'PLAYING'))
+                }
+                className="px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-900 border border-slate-700 hover:border-amber-400/60 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              >
+                Menu [Esc]
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================================
+          MIDDLE PLAYFIELD ZONE (Dedicated non-overlapping area for Board & Side Panels)
+         ===================================================================== */}
+      <div className="relative flex-1 min-h-0 w-full flex items-center justify-between overflow-hidden">
+        {/* Left Inspector Card (Desktop XL) */}
+        {gameState !== 'TITLE_MENU' && (
+          <div className="hidden xl:block w-64 shrink-0 pl-5 z-10">
+            <div className="bg-[#0F172A]/95 border border-slate-800 rounded-xl p-4 shadow-xl">
+              <div className="text-xs font-mono-num text-slate-400 mb-2">
+                INSPEKSI PETAK · {coordToAlgebraic(inspectCoord).toUpperCase()}
+              </div>
+
+              {/* Terrain Info */}
+              <div className="mb-3 pb-3 border-b border-slate-800">
+                <div
+                  className="text-sm font-bold mb-1"
+                  style={{ color: TERRAIN_INFO[inspectedTerrain].color }}
+                >
+                  {TERRAIN_INFO[inspectedTerrain].name}
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  {TERRAIN_INFO[inspectedTerrain].desc}
+                </p>
+              </div>
+
+              {/* Piece Info */}
+              {inspectedPiece ? (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-bold text-white">
+                      {PIECE_NAMES_ID[inspectedPiece.type]}{' '}
+                      {inspectedPiece.color === 'w' ? 'Putih' : 'Hitam'}
+                    </span>
+                    <span className="text-xs font-mono-num text-sky-300">
+                      Perisai: {inspectedPiece.armor}/{inspectedPiece.maxArmor}
+                    </span>
+                  </div>
+                  <div className="text-xs text-amber-300 font-medium mb-1">
+                    Jiwa: {SOUL_TRAIT_INFO[inspectedPiece.soulTrait].name}
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    {SOUL_TRAIT_INFO[inspectedPiece.soulTrait].desc}
+                  </p>
+                  {inspectedPiece.frozenTurns > 0 && (
+                    <p className="text-xs text-sky-400 font-semibold mt-1.5">
+                      Membeku ({inspectedPiece.frozenTurns} giliran tersisa)
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="text-xs text-slate-500">
+                  Petak kosong. Arahkan kursor ke bidak untuk melihat Perisai & Kekuatan Jiwa.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Isolated 60fps Canvas Playfield Container (Never covered by Top or Bottom bars) */}
+        <div className="flex-1 h-full min-w-0 relative z-0">
+          <RiftBoardCanvas
+            gameState={gameState}
+            gameMode={gameMode}
+            boardState={boardState}
+            selectedCoord={selectedCoord}
+            cursorCoord={cursorCoord}
+            activeSpell={activeSpell}
+            spellFirstTarget={spellFirstTarget}
+            aiTelegraph={aiTelegraph}
+            fxTrigger={fxTrigger}
+            onTileClick={handleTileClick}
+            onHoverTile={setHoveredCoord}
+            onCursorMove={setCursorCoord}
+          />
+        </div>
+
+        {/* Right Combat Log (Desktop XL) */}
+        {gameState !== 'TITLE_MENU' && (
+          <div className="hidden xl:block w-64 shrink-0 pr-5 z-10">
+            <div className="bg-[#0F172A]/95 border border-slate-800 rounded-xl p-4 shadow-xl">
+              <div className="text-xs font-mono-num text-slate-400 mb-2">
+                RIWAYAT PERTEMPURAN
+              </div>
+              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                {combatLog.slice(0, 6).map((ev) => (
+                  <div
+                    key={ev.id}
+                    className="text-xs leading-snug pb-1.5 border-b border-slate-800/70 last:border-none"
+                  >
+                    <span className="font-mono-num text-slate-500 mr-1.5">
+                      #{ev.turnNumber}
+                    </span>
+                    <span
+                      className={
+                        ev.kind === 'CAPTURE'
+                          ? 'text-amber-300 font-medium'
+                          : ev.kind === 'SHIELD_BREAK'
+                          ? 'text-sky-300'
+                          : ev.kind === 'TELEPORT'
+                          ? 'text-purple-300'
+                          : ev.kind === 'SPELL'
+                          ? 'text-emerald-300'
+                          : 'text-slate-300'
+                      }
+                    >
+                      {ev.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* =====================================================================
+          BOTTOM PERIMETER DOCK: Aether Spells [1-4] & Live Status Bar (Dedicated footer row)
+         ===================================================================== */}
+      {gameState !== 'TITLE_MENU' && (
+        <div className="shrink-0 z-10 px-3 pb-2.5 pt-1 md:px-5 md:pb-3 flex flex-col items-center gap-1.5">
+          {/* Status instruction line */}
+          <div className="px-3.5 py-1 rounded-lg bg-[#0F172A]/95 border border-slate-800 text-xs text-slate-200 font-medium shadow">
+            {statusMessage}
+          </div>
+
+          {/* 4 Tactical Chrono/Aether Spells */}
+          <div className="flex flex-wrap items-center justify-center gap-2 bg-[#0F172A]/95 border border-slate-800 rounded-xl p-1.5 shadow-xl">
+            {SPELLS.map((sp) => {
+              const currentAether = boardState.aether[boardState.turn];
+              const canAfford =
+                currentAether >= sp.cost &&
+                !(opponentType === 'AI' && boardState.turn === 'b');
+              const isSelected = activeSpell === sp.id;
+
+              return (
+                <button
+                  key={sp.id}
+                  onClick={() => handleSelectSpell(sp.id)}
+                  disabled={!canAfford && !isSelected}
+                  title={sp.shortDesc}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-left transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                    isSelected
+                      ? 'bg-sky-500/25 border-sky-400 text-white shadow-sm'
+                      : canAfford
+                      ? 'bg-slate-900/90 border-slate-700/80 text-slate-200 hover:border-amber-400/70 hover:text-white'
+                      : 'bg-slate-950/60 border-slate-800/60 text-slate-500 opacity-60 cursor-not-allowed'
+                  }`}
+                >
+                  <span className="font-mono-num text-xs font-bold text-amber-400">
+                    [{sp.hotkey}]
+                  </span>
+                  <div>
+                    <div className="text-xs font-semibold leading-none mb-0.5">
+                      {sp.name}
+                    </div>
+                    <div className="text-[11px] font-mono-num text-sky-400">
+                      {sp.cost} Aether
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => startNewGame()}
+              className="px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-900 border border-slate-700/80 hover:border-slate-500 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              Ulangi Papan
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* =====================================================================
           STATE 1: TITLE MENU (Full-Viewport Game Shell with Live-World Backdrop)
@@ -819,248 +1074,6 @@ export default function App() {
           {/* Flat Control-Hint Line */}
           <div className="text-center text-xs text-slate-400 font-mono-num">
             Klik / WASD Pilih Bidak · 1–4 Mantra Aether · Spasi Konfirmasi · Esc Jeda
-          </div>
-        </div>
-      )}
-
-      {/* =====================================================================
-          STATE 2: ACTIVE PLAY HUD (Perimeter Low-Occlusion Overlays)
-         ===================================================================== */}
-      {gameState !== 'TITLE_MENU' && (
-        <div className="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-3 md:p-5">
-          {/* TOP PERIMETER BAR */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pointer-events-auto bg-[#0F172A]/95 border border-slate-800 rounded-xl px-4 py-2.5 shadow-lg">
-            {/* Left: Game Title & Mode Readout */}
-            <div className="flex items-center gap-3">
-              <span className="font-display font-bold text-sm md:text-base text-amber-400 whitespace-nowrap shrink-0">
-                CAKRAWALA
-              </span>
-              <span className="text-slate-600" aria-hidden="true">
-                ·
-              </span>
-              <span className="text-xs text-slate-300 font-mono-num whitespace-nowrap">
-                Putaran {boardState.turnNumber}
-              </span>
-              <span className="text-slate-600 hidden sm:inline" aria-hidden="true">
-                ·
-              </span>
-              <span className="text-xs text-sky-300 hidden sm:inline whitespace-nowrap">
-                {gameMode === 'RIFT_TACTICS'
-                  ? 'Mode Rift Taktis'
-                  : gameMode === 'FOG_OF_WAR'
-                  ? 'Mode Kabut Perang'
-                  : 'Mode Gempa Kuantum'}
-              </span>
-            </div>
-
-            {/* Center: Turn & Aether Meters */}
-            <div className="flex items-center gap-5 font-mono-num text-xs">
-              {/* White Status */}
-              <div
-                className={`flex items-center gap-2 px-2.5 py-1 rounded-md border ${
-                  boardState.turn === 'w'
-                    ? 'bg-amber-500/15 border-amber-400/70 text-amber-200'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-400'
-                }`}
-              >
-                <span className="font-semibold">PUTIH</span>
-                <span>·</span>
-                <span className="text-sky-300">
-                  Aether: {boardState.aether.w}/{boardState.maxAether}
-                </span>
-                {boardState.inCheck.w && (
-                  <span className="text-rose-400 font-bold">· BAHAYA!</span>
-                )}
-              </div>
-
-              {/* Black Status */}
-              <div
-                className={`flex items-center gap-2 px-2.5 py-1 rounded-md border ${
-                  boardState.turn === 'b'
-                    ? 'bg-purple-500/20 border-purple-400/70 text-purple-200'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-400'
-                }`}
-              >
-                <span className="font-semibold">
-                  {opponentType === 'AI' ? 'AI HITAM' : 'HITAM'}
-                </span>
-                <span>·</span>
-                <span className="text-sky-300">
-                  Aether: {boardState.aether.b}/{boardState.maxAether}
-                </span>
-                {boardState.inCheck.b && (
-                  <span className="text-rose-400 font-bold">· BAHAYA!</span>
-                )}
-              </div>
-            </div>
-
-            {/* Right: Utility Buttons */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowRulesModal(true)}
-                className="px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                Panduan Elemen
-              </button>
-              <button
-                onClick={() => {
-                  const m = sound.toggleMute();
-                  setIsMuted(m);
-                }}
-                className="px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-900 border border-slate-700 hover:border-slate-500 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                {isMuted ? 'Suara: Mati' : 'Suara: Aktif'}
-              </button>
-              <button
-                onClick={() =>
-                  setGameState((prev) => (prev === 'PLAYING' ? 'PAUSED' : 'PLAYING'))
-                }
-                className="px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-900 border border-slate-700 hover:border-amber-400/60 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                Menu [Esc]
-              </button>
-            </div>
-          </div>
-
-          {/* MIDDLE SIDE PANELS (Desktop Left & Right Contextual Readouts — Low Occlusion) */}
-          <div className="hidden xl:flex items-start justify-between my-auto pointer-events-none">
-            {/* Left Inspector Card: Tile Terrain & Inspected Piece */}
-            <div className="w-64 pointer-events-auto bg-[#0F172A]/95 border border-slate-800 rounded-xl p-4 shadow-xl">
-              <div className="text-xs font-mono-num text-slate-400 mb-2">
-                INSPEKSI PETAK · {coordToAlgebraic(inspectCoord).toUpperCase()}
-              </div>
-
-              {/* Terrain Info */}
-              <div className="mb-3 pb-3 border-b border-slate-800">
-                <div
-                  className="text-sm font-bold mb-1"
-                  style={{ color: TERRAIN_INFO[inspectedTerrain].color }}
-                >
-                  {TERRAIN_INFO[inspectedTerrain].name}
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  {TERRAIN_INFO[inspectedTerrain].desc}
-                </p>
-              </div>
-
-              {/* Piece Info */}
-              {inspectedPiece ? (
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-bold text-white">
-                      {PIECE_NAMES_ID[inspectedPiece.type]}{' '}
-                      {inspectedPiece.color === 'w' ? 'Putih' : 'Hitam'}
-                    </span>
-                    <span className="text-xs font-mono-num text-sky-300">
-                      Perisai: {inspectedPiece.armor}/{inspectedPiece.maxArmor}
-                    </span>
-                  </div>
-                  <div className="text-xs text-amber-300 font-medium mb-1">
-                    Jiwa: {SOUL_TRAIT_INFO[inspectedPiece.soulTrait].name}
-                  </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    {SOUL_TRAIT_INFO[inspectedPiece.soulTrait].desc}
-                  </p>
-                  {inspectedPiece.frozenTurns > 0 && (
-                    <p className="text-xs text-sky-400 font-semibold mt-1.5">
-                      Membeku ({inspectedPiece.frozenTurns} giliran tersisa)
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="text-xs text-slate-500">
-                  Petak kosong. Arahkan kursor ke bidak untuk melihat Perisai & Kekuatan Jiwa.
-                </div>
-              )}
-            </div>
-
-            {/* Right Combat Log */}
-            <div className="w-64 pointer-events-auto bg-[#0F172A]/95 border border-slate-800 rounded-xl p-4 shadow-xl">
-              <div className="text-xs font-mono-num text-slate-400 mb-2">
-                RIWAYAT PERTEMPURAN
-              </div>
-              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                {combatLog.slice(0, 6).map((ev) => (
-                  <div
-                    key={ev.id}
-                    className="text-xs leading-snug pb-1.5 border-b border-slate-800/70 last:border-none"
-                  >
-                    <span className="font-mono-num text-slate-500 mr-1.5">
-                      #{ev.turnNumber}
-                    </span>
-                    <span
-                      className={
-                        ev.kind === 'CAPTURE'
-                          ? 'text-amber-300 font-medium'
-                          : ev.kind === 'SHIELD_BREAK'
-                          ? 'text-sky-300'
-                          : ev.kind === 'TELEPORT'
-                          ? 'text-purple-300'
-                          : ev.kind === 'SPELL'
-                          ? 'text-emerald-300'
-                          : 'text-slate-300'
-                      }
-                    >
-                      {ev.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* BOTTOM PERIMETER DOCK: Aether Spells [1-4] & Live Status Bar */}
-          <div className="flex flex-col items-center gap-2 pointer-events-auto">
-            {/* Status instruction line */}
-            <div className="px-4 py-1.5 rounded-lg bg-[#0F172A]/95 border border-slate-800 text-xs text-slate-200 font-medium shadow">
-              {statusMessage}
-            </div>
-
-            {/* 4 Tactical Chrono/Aether Spells */}
-            <div className="flex flex-wrap items-center justify-center gap-2 bg-[#0F172A]/95 border border-slate-800 rounded-xl p-2 shadow-xl">
-              {SPELLS.map((sp) => {
-                const currentAether = boardState.aether[boardState.turn];
-                const canAfford =
-                  currentAether >= sp.cost &&
-                  !(opponentType === 'AI' && boardState.turn === 'b');
-                const isSelected = activeSpell === sp.id;
-
-                return (
-                  <button
-                    key={sp.id}
-                    onClick={() => handleSelectSpell(sp.id)}
-                    disabled={!canAfford && !isSelected}
-                    title={sp.shortDesc}
-                    className={`flex items-center gap-2.5 px-3.5 py-2 rounded-lg border text-left transition-all cursor-pointer whitespace-nowrap shrink-0 ${
-                      isSelected
-                        ? 'bg-sky-500/25 border-sky-400 text-white shadow-sm'
-                        : canAfford
-                        ? 'bg-slate-900/90 border-slate-700/80 text-slate-200 hover:border-amber-400/70 hover:text-white'
-                        : 'bg-slate-950/60 border-slate-800/60 text-slate-500 opacity-60 cursor-not-allowed'
-                    }`}
-                  >
-                    <span className="font-mono-num text-xs font-bold text-amber-400">
-                      [{sp.hotkey}]
-                    </span>
-                    <div>
-                      <div className="text-xs font-semibold leading-none mb-0.5">
-                        {sp.name}
-                      </div>
-                      <div className="text-[11px] font-mono-num text-sky-400">
-                        {sp.cost} Aether
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-
-              <button
-                onClick={() => startNewGame()}
-                className="px-3.5 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-900 border border-slate-700/80 hover:border-slate-500 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                Ulangi Papan
-              </button>
-            </div>
           </div>
         </div>
       )}

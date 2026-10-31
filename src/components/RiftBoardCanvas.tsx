@@ -308,14 +308,14 @@ export const RiftBoardCanvas: React.FC<RiftBoardCanvasProps> = ({
       canvas.width = Math.max(1, Math.floor(rect.width * dpr));
       canvas.height = Math.max(1, Math.floor(rect.height * dpr));
 
-      // Compute board geometry leaving breathing room for coordinates & atmospheric background
+      // Compute board geometry with clean margin inside the dedicated middle playfield
       const w = rect.width;
       const h = rect.height;
-      const maxBoard = Math.min(w - 32, h - 110, 680);
-      const boardSize = Math.max(280, Math.floor(maxBoard / 8) * 8);
+      const maxBoard = Math.min(w - 44, h - 44, 680);
+      const boardSize = Math.max(240, Math.floor(maxBoard / 8) * 8);
       const tileSize = boardSize / 8;
       const bx = Math.floor((w - boardSize) / 2);
-      const by = Math.floor((h - boardSize) / 2) + 6;
+      const by = Math.floor((h - boardSize) / 2);
       simRef.current.boardRect = { x: bx, y: by, size: boardSize, tileSize };
     };
 
