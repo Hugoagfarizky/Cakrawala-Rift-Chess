@@ -1,104 +1,104 @@
-# Cakrawala: Rift Chess — Catur Taktis Dimensi Baru
+# Cakrawala: Rift Chess — A New Dimension of Tactical Chess
 
-**Cakrawala: Rift Chess** adalah game strategi berbasis giliran yang merombak aturan catur klasik menjadi pertempuran taktis penuh aksi. Berbeda dengan catur konvensional yang mana setiap tangkapan langsung mengeliminasi bidak dan setiap petak papan bersifat pasif, **Cakrawala** menghadirkan **Perisai Kristal**, **Penyerapan Jiwa Lawan**, **Petak Medan Elemen**, **Mantra Aether**, dan **Kabut Perang**.
+**Cakrawala: Rift Chess** is a turn-based strategy game that reworks classic chess rules into a full-action tactical battle. Unlike conventional chess, where every capture eliminates a piece instantly and every square is passive, **Cakrawala** introduces **Crystal Shields**, **Soul Absorption from Defeated Enemies**, **Elemental Terrain Tiles**, **Aether Spells**, and **Fog of War**.
 
 ---
 
-## Fitur & Mekanik Utama
+## Main features & mechanics
 
-### 1. Sistem Perisai Kristal & Serangan Mental (*Shield Strike & Recoil*)
-- Bidak berat (**Benteng**, **Menteri**, dan **Raja**) memulai permainan dengan **1 Perisai Kristal** (ditandai dengan indikator angka biru di sudut kanan atas bidak).
-- Ketika bidak berperisai diserang oleh serangan biasa, bidak tersebut **tidak langsung gugur**:
-  - Perisai akan pecah untuk menahan hantaman (`Perisai -1`).
-  - Bidak penyerang akan **terpental kembali (*recoil*)** ke petak asalnya.
-  - Penyerang tetap mendapatkan **+1 Energi Aether** atas keberhasilan menghancurkan perisai lawan.
-- Serangan kedua terhadap bidak yang sudah kehilangan perisai baru akan menumbangkan bidak tersebut.
+### 1. Crystal Shield System & Mental Strike (Shield Strike & Recoil)
+- Heavy pieces (**Rook**, **Queen**, and **King**) start the game with **1 Crystal Shield** (marked by a blue number indicator in the top-right corner of the piece).
+- When a shielded piece is attacked by a normal strike, it does **not fall immediately**:
+  - The shield breaks to absorb the hit (`Shield -1`).
+  - The attacking piece **rebounds (recoil)** back to its original square.
+  - The attacker still gains **+1 Aether Energy** for successfully breaking the enemy shield.
+- A second attack against a piece that has already lost its shield finally brings it down.
 
-### 2. Penyerapan Jiwa Lawan (*Soul Absorption*)
-Setiap bidak (selain Raja) yang berhasil menumbangkan bidak lawan untuk pertama kalinya akan menyerap **Jiwa** dari bidak yang dikalahkan dan berevolusi secara permanen:
+### 2. Soul Absorption from Defeated Enemies
+Every piece (except the King) that brings down an enemy piece for the first time absorbs the **Soul** of the defeated piece and permanently evolves:
 
-| Bidak yang Dikalahkan | Jiwa yang Diserap | Simbol | Efek Evolusi pada Bidak Penyerang |
+| Defeated piece | Absorbed soul | Symbol | Evolution effect on the attacking piece |
 | :--- | :--- | :---: | :--- |
-| **Kuda (*Knight*)** | **Jiwa Kuda** | `L` | Dapat ikut melompat membentuk huruf L seperti Kuda selain gerak aslinya. |
-| **Gajah / Pion** | **Langkah Bayangan** | `P` | Dapat bergeser 1 petak ke segala arah (8 arah sekitar) seperti Raja. |
-| **Benteng / Menteri** | **Tombak Bara** | `B` | Serangannya bersifat **Penembus (*Piercing*)**—langsung menghancurkan bidak berperisai dalam 1 serangan tanpa terpental! |
+| **Knight** | **Knight Soul** | `L` | Can also move in an L-shape like a Knight in addition to its normal movement. |
+| **Bishop / Pawn** | **Shadow Step** | `P` | Can shift 1 square in any direction (8 surrounding squares) like a King. |
+| **Rook / Queen** | **Ember Spear** | `B` | Attacks become **Piercing** — instantly destroy a shielded piece in a single strike without rebounding! |
 
-### 3. Petak Medan Elemen di Papan
-Papan 8×8 memiliki petak elemen simetris di area tengah pertempuran:
-- **Portal Rift ($\alpha$ & $\beta$)**: Sepasang portal dimensi. Bidak yang berhenti di `RIFT α` akan langsung berpindah (*teleport*) ke `RIFT β` jika petak tujuan sedang kosong (begitu pula sebaliknya).
-- **Sumur Aether (`+AETHER`)**: Menghasilkan **+1 Energi Aether tambahan** setiap awal giliran selama dikuasai oleh bidak Anda, serta memberikan **+1 Perisai Kristal** saat pertama kali ditempati.
-- **Hutan Lindung (`LINDUNG`)**: Melindungi bidak di dalamnya dari serangan jarak jauh. Lawan tidak dapat menangkap bidak di petak ini dari jarak lebih dari 2 petak.
-- **Kawah Bara (`BARA`)**: Bidak apa pun yang melancarkan serangan dari atas petak ini mendapatkan efek **Serangan Penembus (*Piercing*)**, langsung mengeliminasi bidak berperisai dalam sekali serang.
+### 3. Elemental terrain tiles on the board
+The 8×8 board has symmetric elemental tiles in the central battle area:
+- **Rift Portal ($\alpha$ & $\beta$)**: a pair of dimensional portals. A piece that stops on `RIFT α` instantly teleports to `RIFT β` if the destination square is empty (and vice versa).
+- **Aether Well (`+AETHER`)**: grants **+1 extra Aether Energy** at the start of each turn while controlled by your piece, and grants **+1 Crystal Shield** the first time it is occupied.
+- **Guardian Forest (`LINDUNG`)**: protects pieces inside it from ranged attacks. Opponents cannot capture a piece on this square from more than 2 squares away.
+- **Ember Crater (`BARA`)**: any piece that attacks from this square gains the **Piercing Attack** effect, instantly eliminating a shielded piece in a single strike.
 
-### 4. Empat Mantra Aether (*Chrono & Rift Spells*)
-Pemain mengumpulkan **Energi Aether** setiap giliran (+1 dasar tiap giliran, +1 per Sumur Aether yang dikuasai, dan +2 setiap menumbangkan lawan, maksimal 10 Aether). Mantra dapat diaktifkan **sebelum melangkah** tanpa menguras giliran gerak bidak:
+### 4. Four Aether Spells (Chrono & Rift Spells)
+Players accumulate **Aether Energy** each turn (+1 base per turn, +1 per Aether Well controlled, and +2 per enemy defeated, maximum 10 Aether). Spells can be activated **before moving** without consuming the piece's move action:
 
-1. **`[1]` Perisai Kristal (2 Aether)**: Memberikan +1 Perisai Kristal pada salah satu bidak kawan (maksimal 2 Perisai).
-2. **`[2]` Bekukan Waktu (3 Aether)**: Membekukan 1 bidak lawan (selain Raja) selama 1 putaran penuh sehingga tidak dapat bergerak atau menyerang.
-3. **`[3]` Tukar Kuantum (3 Aether)**: Menukar posisi 2 bidak kawan (selain Raja) di papan secara instan.
-4. **`[4]` Gempa Cakrawala (4 Aether)**: Menggeser susunan petak elemen di baris tengah papan secara dinamis sekaligus memberikan +1 Perisai pada Raja Anda.
-
----
-
-## Mode Permainan & Lawan
-
-### 3 Mode Taktis
-- **01. Cakrawala Rift**: Mode standar lengkap dengan Portal Rift, Sumur Aether, Hutan Lindung, Kawah Bara, Penyerapan Jiwa, dan 4 Mantra Aether.
-- **02. Kabut Perang (*Fog of War*)**: Petak di luar jarak pandang bidak kawan diselimuti kabut gelap. Pergerakan lawan hanya terlihat jika masuk ke dalam radius pantauan bidak Anda atau berada di atas Sumur Aether.
-- **03. Gempa Kuantum (*Quantum Shift*)**: Medan pertempuran hidup—setiap 4 putaran penuh, arus tektonik menggeser posisi petak elemen di tengah papan secara otomatis.
-
-### Pilihan Lawan
-- **AI Taktis (3 Tingkat Kesulitan)**:
-  - **Pemula (*Novice*)**: AI bermain lebih santai untuk mempelajari mekanik elemen dan perisai.
-  - **Taktisi (*Tactician*)**: AI mengevaluasi nilai perisai, petak elemen, dan aktif menggunakan Mantra Aether.
-  - **Grandmaster**: AI memperhitungkan langkah balasan, mengincar Sumur Aether, dan mengombinasikan mantra dengan serangan penembus.
-- **2 Pemain Lokal (*Pass & Play*)**: Bermain bergantian Putih dan Hitam dalam satu perangkat.
+1. **`[1]` Crystal Shield (2 Aether)**: grants +1 Crystal Shield to one allied piece (maximum 2 Shields).
+2. **`[2]` Freeze Time (3 Aether)**: freezes 1 enemy piece (except the King) for a full turn so it cannot move or attack.
+3. **`[3]` Quantum Swap (3 Aether)**: instantly swaps the positions of 2 allied pieces (except the King) on the board.
+4. **`[4]` Rift Quake (4 Aether)**: dynamically shifts the elemental tile layout in the board's middle rows while granting +1 Shield to your King.
 
 ---
 
-## Kontrol Permainan
+## Game modes & opponents
 
-| Input / Tombol | Fungsi |
+### 3 tactical modes
+- **01. Cakrawala Rift**: standard full mode with Rift Portals, Aether Wells, Guardian Forest, Ember Crater, Soul Absorption, and 4 Aether Spells.
+- **02. Fog of War**: squares beyond an allied piece's sight range are covered in dark fog. Enemy movement is only visible if it enters your piece's watch radius or stands on an Aether Well.
+- **03. Quantum Shift**: a living battlefield — every 4 full turns, tectonic currents automatically shift the positions of the elemental tiles in the center of the board.
+
+### Opponent options
+- **Tactical AI (3 difficulty levels)**:
+  - **Novice**: AI plays more casually to help you learn the elemental and shield mechanics.
+  - **Tactician**: AI evaluates shield value, elemental tiles, and actively uses Aether Spells.
+  - **Grandmaster**: AI calculates counter-moves, targets Aether Wells, and combines spells with piercing attacks.
+- **2-Player Local (Pass & Play)**: take turns playing White and Black on a single device.
+
+---
+
+## Game controls
+
+| Input / Button | Function |
 | :--- | :--- |
-| **Klik Kiri Mouse** | Memilih bidak, memilih petak tujuan, atau memilih target mantra |
-| **`W` `A` `S` `D` / Tombol Panah** | Menggerakkan kursor petak di papan |
-| **`Spasi` / `Enter`** | Memilih bidak / mengonfirmasi langkah pada kursor (atau memulai game di layar judul) |
-| **`1` `2` `3` `4`** | Mengaktifkan atau membatalkan Mantra Aether 1–4 |
-| **`M`** | Menyalakan / mematikan efek suara (*Mute / Unmute*) |
-| **`Esc`** | Membatalkan pilihan mantra/bidak atau membuka menu Jeda (*Pause*) |
+| **Left Mouse Click** | Select a piece, select a destination square, or select a spell target |
+| **`W` `A` `S` `D` / Arrow Keys** | Move the square cursor on the board |
+| **`Space` / `Enter`** | Select a piece / confirm a move on the cursor (or start the game on the title screen) |
+| **`1` `2` `3` `4`** | Activate or cancel Aether Spells 1–4 |
+| **`M`** | Toggle sound effects (*Mute / Unmute*) |
+| **`Esc`** | Cancel spell/piece selection or open the *Pause* menu |
 
 ---
 
-## Struktur Proyek
+## Project structure
 
 ```text
-├── index.html                  # Entry point HTML & konfigurasi font (Cinzel, Plus Jakarta Sans, JetBrains Mono)
-├── metadata.json               # Metadata aplikasi
+├── index.html                  # HTML entry point & font config (Cinzel, Plus Jakarta Sans, JetBrains Mono)
+├── metadata.json               # App metadata
 ├── src/
-│   ├── main.tsx                # Bootstrap React DOM
-│   ├── App.tsx                 # Game Shell utama, HUD, pemilih mode, dan kontrol Mantra Aether
-│   ├── index.css               # Konfigurasi Tailwind CSS v4 & variabel tipografi
+│   ├── main.tsx                # React DOM bootstrap
+│   ├── App.tsx                 # Main game shell, HUD, mode selector, and Aether Spell controls
+│   ├── index.css               # Tailwind CSS v4 config & typography variables
 │   ├── components/
-│   │   └── RiftBoardCanvas.tsx # Renderer HTML5 Canvas 60fps, efek partikel, hitstop, & telegraf serangan AI
+│   │   └── RiftBoardCanvas.tsx # 60fps HTML5 Canvas renderer, particle effects, hitstop, & AI attack telegraphs
 │   └── game/
-│       ├── types.ts            # Definisi tipe data bidak, jiwa, petak elemen, dan mantra
-│       ├── engine.ts           # Logika aturan gerak, perisai, portal rift, Fog of War, dan evaluasi AI
-│       └── sound.ts            # Synthesizer efek suara prosedural berbasis Web Audio API
+│       ├── types.ts            # Type definitions for pieces, souls, elemental tiles, and spells
+│       ├── engine.ts           # Move rules, shields, rift portals, Fog of War, and AI evaluation
+│       └── sound.ts            # Procedural sound-effect synthesizer based on the Web Audio API
 ```
 
 ---
 
-## Cara Menjalankan Secara Lokal
+## Running locally
 
-1. Instal dependensi:
+1. Install dependencies:
    ```bash
    npm install
    ```
-2. Jalankan server pengembangan (port 3000):
+2. Run the development server (port 3000):
    ```bash
    npm run dev
    ```
-3. Bangun untuk produksi:
+3. Build for production:
    ```bash
    npm run build
    ```
