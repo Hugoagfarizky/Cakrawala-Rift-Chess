@@ -5,6 +5,8 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    // GitHub Pages menyajikan project site di /Cakrawala-Rift-Chess/
+    base: '/Cakrawala-Rift-Chess/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
